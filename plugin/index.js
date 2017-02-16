@@ -100,7 +100,11 @@ DashboardPlugin.prototype.apply = function(compiler) {
       }
     }, {
       type: "log",
-      value: stats.toString({colors: true})
+      value: stats.toString({
+        colors: true,
+        cached: false,
+        chunks: false
+      })
     }]);
   });
 
