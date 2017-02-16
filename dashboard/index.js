@@ -11,6 +11,7 @@ function Dashboard(options) {
   var title = options && options.title || "webpack-dashboard";
 
   this.color = options && options.color || "green";
+  this.progressColor = options && options.progressColor || "blue";
   this.minimal = options && options.minimal || false;
   this.setData = this.setData.bind(this);
 
@@ -42,7 +43,7 @@ Dashboard.prototype.setData = function(dataArr) {
       case "progress": {
         var percent = parseInt(data.value * 100);
         if (self.minimal) {
-          percent && self.progress.setContent(percent.toString() + "%");
+          self.progressbar.setProgress(percent);
         } else {
           percent && self.progressbar.setContent(percent.toString() + "%");
           self.progressbar.setProgress(percent);
@@ -106,12 +107,12 @@ Dashboard.prototype.setData = function(dataArr) {
 
 Dashboard.prototype.layoutLog = function() {
   this.log = blessed.box({
-    label: "Log",
+    label: this.minimal ? null : "Log",
     padding: 1,
     width: this.minimal ? "100%" : "75%",
-    height: this.minimal ? "70%" : "42%",
+    height: this.minimal ? "94%" : "42%",
     left: "0%",
-    top: "0%",
+    top: this.minimal ? "10%" : "0%",
     border: {
       type: "line",
     },
@@ -229,15 +230,15 @@ Dashboard.prototype.layoutStatus = function() {
 
   this.wrapper = blessed.layout({
     width: this.minimal ? "100%" : "25%",
-    height: this.minimal ? "30%" : "42%",
-    top: this.minimal ? "70%" : "0%",
+    height: this.minimal ? "10%" : "42%",
+    top: "0%",
     left: this.minimal ? "0%" : "75%",
     layout: "grid"
   });
 
   this.status = blessed.box({
     parent: this.wrapper,
-    label: "Status",
+    label: this.minimal ? null : "Status",
     tags: true,
     padding: {
       left: 1,
@@ -258,7 +259,7 @@ Dashboard.prototype.layoutStatus = function() {
 
   this.operations = blessed.box({
     parent: this.wrapper,
-    label: "Operation",
+    label: this.minimal ? null : "Operation",
     tags: true,
     padding: {
       left: 1,
@@ -279,7 +280,7 @@ Dashboard.prototype.layoutStatus = function() {
 
   this.progress = blessed.box({
     parent: this.wrapper,
-    label: "Progress",
+    label: this.minimal ? null : "Progress",
     tags: true,
     padding: this.minimal ? {
       left: 1,
@@ -301,14 +302,13 @@ Dashboard.prototype.layoutStatus = function() {
   this.progressbar = blessed.ProgressBar({
     parent: this.progress,
     height: 1,
-    width: "90%",
+    width: "87%",
     top: "center",
     left: "center",
-    hidden: this.minimal,
     orientation: "horizontal",
     style: {
       bar: {
-        bg: this.color,
+        bg: this.progressColor || this.color,
       },
     }
   });
